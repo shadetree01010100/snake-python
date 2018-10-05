@@ -9,7 +9,7 @@ class Agent():
         self.game = game
         self.actions = self.game.actions()
         self.interface = Interface(
-            self.game.feature_space(), dot_size, fps, self.actions)
+            self.game.feature_space(), dot_size, self.actions, fps)
 
     def run(self):
         """ Play the game."""

@@ -9,7 +9,7 @@ class Agent():
         self.game = game
         self.actions = self.game.actions()
         self.interface = Interface(
-            self.game.feature_space(), dot_size, 0, self.actions)
+            self.game.feature_space(), dot_size, self.actions)
         self.trials = trials
         # results will go in these lists
         self.frames = []

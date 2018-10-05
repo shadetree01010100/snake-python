@@ -6,16 +6,16 @@ class Interface():
 
     break_keys = [pygame.K_ESCAPE, pygame.K_RETURN, pygame.K_SPACE]
 
-    def __init__(self, grid_size, dot_size, fps, actions={}):
+    def __init__(self, grid_size, dot_size, actions, fps=0):
         """ Provides methods to get user input and draw the game to screen.
 
         Args:
           - grid_size: (tuple) x, y dimensions of play area
           - dot_size: (int) diameter of points when drawing frame, must be
             greater than 1, and probably should be even
+          - actions: (dict) map of {key: action} pairs
           - fps: (int) pause for `1 / fps` seconds before returning from
             `draw_frame`, limiting max frames per second to this value
-          - actions: (dict) map of {key: action} pairs
         """
         self.grid_size = grid_size
         self.dot_size = dot_size
