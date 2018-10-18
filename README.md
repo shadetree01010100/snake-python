@@ -8,10 +8,11 @@ To play the game using the arrow keys on your keyboard, run `python agent_human.
 
 To get a benchmark of random performance for your machine learning needs, run `python agent_random.py`.
 
-To develop an agent, follow this tutorial and/or the included agents. In addition to eating apples, an agent should note which direction is backwards and avoid moving that way to prevent an immediate death.
+To develop an agent, follow this example and/or the included agents. In addition to eating apples, an agent should note which direction is backwards and avoid moving that way to prevent an immediate death.
 ```
 from human_interface import Interface
 from snake import Snake
+
 
 game = Snake()
 interface = Interface(
@@ -19,10 +20,12 @@ interface = Interface(
     dot_size=32,
     actions=game.actions(),
     fps=10)
-apple, snake, score = game.game_state()
-interface.draw_frame(apple, snake, score)
-# define action!
-# do something smart with an AI, or call interface.get_user_input()
-reward, game_over = game.step(action)
-# repeat!
+
+game_over = False
+while not game_over:
+    apple, snake, score = game.game_state()
+    interface.draw_frame(apple, snake, score)
+    # select an action from game.actions(), or
+    # action = interface.get_user_input()
+    reward, game_over = game.step(action)
 ```
