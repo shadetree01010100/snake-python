@@ -42,6 +42,10 @@ class Agent():
             self.game.reset()
         print('average frames: {}'.format(sum(self.frames) / self.trials))
         print('average score: {}'.format(sum(self.scores) / self.trials))
+        scored = [s for s in self.scores if s]
+        print('{} individuals averaged {}'.format(
+            len(scored),
+            round(sum(scored) / len(scored), 3)))
         self.interface.close(True)
 
 if __name__ == '__main__':

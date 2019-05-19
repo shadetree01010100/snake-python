@@ -77,7 +77,9 @@ class Snake():
         # get new head position from action vector
         current_head = self.snake[0]
         new_head = (
-            current_head[0] + action[0], current_head[1] + action[1])
+            current_head[0] + action[0],
+            current_head[1] + action[1],
+        )
         # grow if found apple
         if new_head == self.apple:
             self.score += 1
@@ -86,6 +88,12 @@ class Snake():
             excluded = [new_head] + self.snake[:self.score]
             self.apple = self._random_coords(excluded)
         # move the snake by prepending a new head and truncating the tail
+        # because we move the snake before checking for collisons we also
+        # need to check for special case of reversing with 1 body segment
+        if self.score == 1:
+            if new_head == self.snake[-1]:
+                self.game_over = True
+                reward = -1
         self.snake = [new_head] + self.snake[:self.score]
         # check for collisions
         if new_head in self.snake[1:] or \

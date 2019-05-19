@@ -87,6 +87,10 @@ class Interface():
                     action = new_action
                     return action  # done taking user input
 
+    def pump(self):
+        """ experimental"""
+        pygame.event.pump()
+
     def _draw_apple(self, apple):
         pygame.draw.circle(
             self.surface,
