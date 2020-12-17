@@ -65,7 +65,7 @@ class Interface():
         self._draw_walls()
         self._draw_apple(apple)
         self._draw_snake(snake)
-        pygame.display.set_caption('Score: {}'.format(score))
+        pygame.display.set_caption('Trial: {}'.format(score))
         pygame.display.update()
         if self.fps > 0:
             time.sleep(1 / self.fps)
@@ -141,11 +141,10 @@ class Interface():
         )
 
     def _scale_coords(self, coords):
-        """ Scale up points by `dot_size`, and offset objects by half that 
+        """ Scale up points by `dot_size`, and offset objects by half that
         value from the edges.
         """
         return (
             coords[0] * self.dot_size + self.dot_size,
             coords[1] * self.dot_size + self.dot_size,
         )
-
