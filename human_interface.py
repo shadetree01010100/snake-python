@@ -53,7 +53,7 @@ class Interface():
                         break
         pygame.display.quit()
 
-    def draw_frame(self, apple, snake, score):
+    def draw_frame(self, apple, snake, title):
         """ Draw the current game state.
 
         Args:
@@ -65,7 +65,7 @@ class Interface():
         self._draw_walls()
         self._draw_apple(apple)
         self._draw_snake(snake)
-        pygame.display.set_caption('Trial: {}'.format(score))
+        pygame.display.set_caption(title)
         pygame.display.update()
         if self.fps > 0:
             time.sleep(1 / self.fps)

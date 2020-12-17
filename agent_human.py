@@ -21,7 +21,7 @@ class Agent():
             # advance one frame
             reward, game_over = self.game.step(action)
             apple, snake, score = self.game.game_state()
-            self.interface.draw_frame(apple, snake, score)
+            self.interface.draw_frame(apple, snake, 'Score: {}'.format(score))
             if game_over:
                 break
             new_action = self.interface.get_user_input([action, backwards])

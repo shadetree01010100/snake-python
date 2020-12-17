@@ -14,7 +14,8 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 class Agent():
 
-    def __init__(self, game, dot_size=32, trials=1000, learning_rate=0.001):
+    def __init__(self, game, dot_size=32, trials=1000, learning_rate=0.001, FPS=0):
+        self.FPS = FPS
         self.game = game
         self.actions = self.game.actions()
         self.interface = Interface(
@@ -23,7 +24,6 @@ class Agent():
         # results will go in these lists
         self.frames = []
         self.scores = []
-        self.accumulated_rewards = []
         self.random_choice_history = []
         # build network
         self._setup_qnn(learning_rate)
@@ -32,12 +32,9 @@ class Agent():
         self.random_action_prob = self.max_random_action_prob
         self.random_action_cutoff = self.trials / 2
         self.discounted_future_reward = 0.9
-        # self.max_dfr_prob = 0.5
-        # self.dfr_prob = self.max_dfr_prob
-        # self.dfr_cutoff = self.trials / 2
         # limit the steps of lost agents
         self.max_idle_frames = (self.game.feature_space()[0] *
-                                self.game.feature_space()[1])# // 2
+                                self.game.feature_space()[1])
 
     def run(self):
         """ Learn all the things."""
@@ -54,7 +51,6 @@ class Agent():
                         self.random_action_prob * 100)
                 # first observation
                 apple, snake, score = self.game.game_state()
-                accumulated_reward = 0
                 done = False
                 step = 0
                 # The Q-Network
@@ -117,7 +113,6 @@ class Agent():
                         targetQ[0] = [1 for _ in targetQ[0]]
                         # don't do that again
                         targetQ[0, prediction[0]] = 0
-                    accumulated_reward += actual_reward
                     # train
                     inputs = self.get_inputs(apple, snake, score)
                     # summary, _, loss, W0, W1 = sess.run(
@@ -145,20 +140,33 @@ class Agent():
                     apple, snake, score = new_apple, new_snake, new_score
                     step += 1
                     i += 1
-                    self.interface.draw_frame(new_apple, new_snake, r)
+                    if self.FPS:
+                        self.interface.draw_frame(
+                            new_apple,
+                            new_snake,
+                            'Game {}, Score {}, Record {}'.format(
+                                r,
+                                score,
+                                max(self.scores) if self.scores else 0))
+                        self.interface.pump()  # clear event queue
+                        end_time = time.time()
+                        time_delta = end_time - start_time
+                        try:
+                            time.sleep(1/60 - time_delta)
+                        except ValueError:
+                            pass
+                if not self.FPS:
+                    self.interface.draw_frame(
+                        new_apple,
+                        new_snake,
+                        'Game {}, Score {}, Record {}'.format(
+                            r,
+                            score,
+                            max(self.scores) if self.scores else 0))
                     self.interface.pump()  # clear event queue
-                    end_time = time.time()
-                    time_delta = end_time - start_time
-                    try:
-                        time.sleep(1/60 - time_delta)
-                    except ValueError:
-                        pass
-                # self.interface.draw_frame(new_apple, new_snake, r)
-                # self.interface.pump()  # clear event queue
                 self._decay_random_chance(r)
                 self.frames.append(step)
                 self.scores.append(score)
-                self.accumulated_rewards.append(accumulated_reward)
                 self.game.reset()
             summary_writer.close()
             self.interface.close(True)
@@ -280,15 +288,15 @@ class Agent():
 
 if __name__ == '__main__':
     game = Snake(
-        grid_size=(8, 8),
+        grid_size=(16, 16),
         random_spawn=True,
         # seed='SeymourButts',
     )
     agent = Agent(
         game=game,
-        # dot_size=32,
         trials=10000,
         learning_rate=0.001,
+        FPS=60,
     )
     try:
         agent.run()
@@ -296,7 +304,8 @@ if __name__ == '__main__':
         pass
     print('HIGH SCORE: {}'.format(max(agent.scores)))
     plt.plot(agent.scores)
-    # plt.plot(agent.accumulated_rewards)
     plt.plot(agent.random_choice_history)
-    # plt.axis([0, agent.trials, -5, 5])
+    plt.axis([
+        0, agent.trials,
+        0, max(agent.random_choice_history)])
     plt.show()

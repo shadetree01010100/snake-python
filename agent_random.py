@@ -38,7 +38,7 @@ class Agent():
                 backwards = (action[0] * -1, action[1] * -1)
             self.frames.append(frame_num)
             self.scores.append(score)
-            self.interface.draw_frame(apple, snake, score)
+            self.interface.draw_frame(apple, snake, 'Score: {}'.format(score))
             self.game.reset()
         print('average frames: {}'.format(sum(self.frames) / self.trials))
         print('average score: {}'.format(sum(self.scores) / self.trials))
